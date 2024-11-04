@@ -17,7 +17,7 @@ TARGET_PORTS = [135, 445, 3389, 5985, 5986]
 DEFAULT_SHOTS = [EVENShot, RPRNShot, RRPShot, EVEN6Shot]
 
 class CornerShot(object):
-    def __init__(self, username, password, domain, workers=250, shots=None):
+    def __init__(self, username, password, hashes, domain, workers=250, shots=None):
 
         logger.debug(f'CS created with username: {username},domain:{domain},workers:{workers}')
         if shots is None:
@@ -25,6 +25,7 @@ class CornerShot(object):
 
         self.shot_classes = shots
         self.username = username
+        self.hashes = hashes
         self.password = password
         self.domain = domain
         self.workers = workers
@@ -90,7 +91,7 @@ class CornerShot(object):
             for target in targets:
                 for target_port in target_ports:
                     for cls in self._get_suitable_shots(target_port, destination_ports):
-                        self.shot_list.append(cls(self.username, self.password, self.domain, destination, target,target_port=target_port))
+                        self.shot_list.append(cls(self.username, self.password, self.hashes ,self.domain, destination, target,target_port=target_port))
 
     def _merge_result(self, dest, target, tport, state):
         if self.skip_scanned and PORT_OPEN in state:

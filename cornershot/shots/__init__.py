@@ -33,7 +33,7 @@ MIN_TIME_THREASHOLD = 0.5
 class BaseRPCShot(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, username, password, domain, ts, iface_uuid, destination=None, target=None, dest_port=None,
+    def __init__(self, username, password, domain, ts, iface_uuid, hashes=None, destination=None, target=None, dest_port=None,
                  target_port=None, state_exception_open=None, state_exception_closed=None, auth_level=None,
                  lower_threshold=FILTERED_TIME_THRESHOLD, upper_threshold=UPPER_TIME_THRESHOLD,
                  min_threshold=MIN_TIME_THREASHOLD):
@@ -43,6 +43,8 @@ class BaseRPCShot(object):
         self.trgt_port = target_port if target_port else DEFAULT_TRGT_PORT
         self.username = username
         self.password = password
+        self.lmhash = ''
+        self.nthash = ''
         self.domain = domain
         self.results = []
         self.dce = None
@@ -55,6 +57,8 @@ class BaseRPCShot(object):
         self.iface_uuid = iface_uuid
         self.ts = ts
         self.auth_level = auth_level
+        if hashes is not None:
+            self.lmhash, self.nthash = hashes.split(':')
 
     @abstractmethod
     def do_rpc_logic(self):
@@ -85,7 +89,7 @@ class BaseRPCShot(object):
         try:
             rpctransport = transport.DCERPCTransportFactory(self.do_binding())
             if hasattr(rpctransport, 'set_credentials'):
-                rpctransport.set_credentials(self.username, self.password, self.domain, '', '')
+                rpctransport.set_credentials(self.username, self.password, self.domain, self.lmhash, self.nthash)
             dce = rpctransport.get_dce_rpc()
             dce.connect()
             self.rpcTransport = rpctransport

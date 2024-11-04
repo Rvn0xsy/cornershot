@@ -9,8 +9,8 @@ IFACE_UUID = even6.MSRPC_UUID_EVEN6
 
 class MyCustomShot(BaseRPCShot):
 
-    def __init__(self, username, password, domain, destination, target, dest_port=None, target_port=None):
-        BaseRPCShot.__init__(self, username, password, domain, TS, IFACE_UUID, destination, target, dest_port,target_port)
+    def __init__(self, username, password, hashes, domain, destination, target, dest_port=None, target_port=None):
+        BaseRPCShot.__init__(self, username, password, domain, TS, IFACE_UUID, hashes, destination, target, dest_port,target_port)
 
     @staticmethod
     def target_port_range():
@@ -33,11 +33,12 @@ class MyCustomShot(BaseRPCShot):
 
 if __name__ == '__main__':
     # Credentials of an authenticated user in the domain
-    username = 'username'
-    passwrod = 'password'
-    domain = 'domain.org'
+    username = 'administrator'
+    passwrod = ''
+    domain = ''
+    hashes = ':579da618cfbfa85247acf1f800a280a4'
 
-    cs = CornerShot(username, passwrod, domain, shots=[MyCustomShot])
-    cs.add_shots('192.168.1.1,192.168.1.1', '192.168.2.0/24,192.168.5.5')
+    cs = CornerShot(username, passwrod, hashes, domain, shots=[MyCustomShot])
+    cs.add_shots('10.10.10.10', '10.10.10.0/24')
     results = cs.open_fire()
     print(results)
